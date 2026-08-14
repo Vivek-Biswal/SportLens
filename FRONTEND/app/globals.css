@@ -1,0 +1,316 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #050816;
+  color: white;
+}
+
+/* LOGIN PAGE */
+
+.login-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    linear-gradient(
+      135deg,
+      #050816 0%,
+      #0b1230 45%,
+      #1a1040 100%
+    );
+}
+
+/* Background glowing circles */
+
+.background-glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.25;
+}
+
+.glow-one {
+  background: #4f46e5;
+  top: -150px;
+  left: -100px;
+}
+
+.glow-two {
+  background: #8b5cf6;
+  bottom: -150px;
+  right: -100px;
+}
+
+/* Main container */
+
+.login-container {
+  width: 100%;
+  max-width: 450px;
+  padding: 30px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* BRAND */
+
+.brand {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #8b5cf6
+  );
+
+  font-size: 30px;
+
+  box-shadow:
+    0 10px 40px rgba(99, 102, 241, 0.35);
+}
+
+.brand h1 {
+  font-size: 34px;
+  margin-bottom: 8px;
+}
+
+.brand p {
+  color: #9da6ca;
+  font-size: 14px;
+}
+
+/* LOGIN CARD */
+
+.login-card {
+  padding: 35px;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.45);
+}
+
+.login-card h2 {
+  text-align: center;
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #9da6ca;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+/* FORM */
+
+.login-card label {
+  display: block;
+  color: #d7daf0;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 14px;
+
+  margin-bottom: 20px;
+
+  border-radius: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(0, 0, 0, 0.25);
+
+  color: white;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+.login-card input::placeholder {
+  color: #737c9f;
+}
+
+.login-card input:focus {
+  border-color: #6366f1;
+
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* FORGOT PASSWORD */
+
+.forgot {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.forgot a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.forgot a:hover {
+  color: #c4b5fd;
+}
+
+/* LOGIN BUTTON */
+
+.login-button {
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6366f1,
+      #8b5cf6
+    );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 30px rgba(99, 102, 241, 0.35);
+}
+
+/* DIVIDER */
+
+.divider {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 25px 0;
+
+  color: #6f789b;
+
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* REGISTER */
+
+.register-text {
+  text-align: center;
+
+  color: #9da6ca;
+
+  font-size: 14px;
+
+  margin-bottom: 12px;
+}
+
+.register-button {
+  display: block;
+
+  width: 100%;
+
+  padding: 13px;
+
+  text-align: center;
+
+  border-radius: 10px;
+
+  border: 1px solid #6366f1;
+
+  color: #c4b5fd;
+
+  text-decoration: none;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+}
+
+.register-button:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* FOOTER */
+
+.footer-text {
+  text-align: center;
+
+  margin-top: 25px;
+
+  color: #5f6888;
+
+  font-size: 12px;
+}
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-card {
+    padding: 25px;
+  }
+
+  .brand h1 {
+    font-size: 30px;
+  }
+}

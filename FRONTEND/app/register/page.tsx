@@ -1,0 +1,277 @@
+"use client";
+
+import { useState } from "react";
+
+export default function RegisterPage() {
+  const [role, setRole] = useState<"student" | "coach">("student");
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    alert(`Registration attempted as ${role}`);
+  };
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, #050816 0%, #0b1230 50%, #1a1040 100%)",
+        color: "white",
+        fontFamily: "Arial, sans-serif",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px 20px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "500px",
+        }}
+      >
+        {/* BRAND */}
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: "30px",
+          }}
+        >
+          <div
+            style={{
+              width: "55px",
+              height: "55px",
+              margin: "0 auto 12px",
+              borderRadius: "15px",
+              background:
+                "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "28px",
+            }}
+          >
+            ⚡
+          </div>
+
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "32px",
+            }}
+          >
+            SportLens
+          </h1>
+
+          <p
+            style={{
+              color: "#a5b4fc",
+              marginTop: "8px",
+            }}
+          >
+            Create your SportLens account
+          </p>
+        </div>
+
+        {/* REGISTER CARD */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: "20px",
+            padding: "35px",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <h2
+            style={{
+              textAlign: "center",
+              marginTop: 0,
+              fontSize: "25px",
+            }}
+          >
+            Register
+          </h2>
+
+          <p
+            style={{
+              textAlign: "center",
+              color: "#9ca3c7",
+              marginBottom: "28px",
+            }}
+          >
+            Choose how you want to use SportLens
+          </p>
+
+          {/* ROLE SELECTION */}
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              marginBottom: "25px",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setRole("student")}
+              style={{
+                flex: 1,
+                padding: "15px",
+                borderRadius: "12px",
+                border:
+                  role === "student"
+                    ? "2px solid #6366f1"
+                    : "1px solid rgba(255,255,255,0.15)",
+                background:
+                  role === "student"
+                    ? "rgba(99,102,241,0.2)"
+                    : "rgba(255,255,255,0.04)",
+                color: "white",
+                cursor: "pointer",
+                fontSize: "15px",
+              }}
+            >
+              🎓
+              <br />
+              Student
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setRole("coach")}
+              style={{
+                flex: 1,
+                padding: "15px",
+                borderRadius: "12px",
+                border:
+                  role === "coach"
+                    ? "2px solid #8b5cf6"
+                    : "1px solid rgba(255,255,255,0.15)",
+                background:
+                  role === "coach"
+                    ? "rgba(139,92,246,0.2)"
+                    : "rgba(255,255,255,0.04)",
+                color: "white",
+                cursor: "pointer",
+                fontSize: "15px",
+              }}
+            >
+              🏆
+              <br />
+              Coach
+            </button>
+          </div>
+
+          <form onSubmit={handleRegister}>
+            {/* NAME */}
+            <label>Full Name</label>
+
+            <input
+              type="text"
+              placeholder="Enter your full name"
+              required
+              style={inputStyle}
+            />
+
+            {/* EMAIL */}
+            <label>Email</label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              required
+              style={inputStyle}
+            />
+
+            {/* PASSWORD */}
+            <label>Password</label>
+
+            <input
+              type="password"
+              placeholder="Create a password"
+              required
+              style={inputStyle}
+            />
+
+            {/* CONFIRM PASSWORD */}
+            <label>Confirm Password</label>
+
+            <input
+              type="password"
+              placeholder="Confirm your password"
+              required
+              style={inputStyle}
+            />
+
+            {/* REGISTER */}
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "15px",
+                marginTop: "25px",
+                border: "none",
+                borderRadius: "12px",
+                background:
+                  "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                color: "white",
+                fontSize: "16px",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Register as {role === "student" ? "Student" : "Coach"} →
+            </button>
+          </form>
+
+          {/* LOGIN LINK */}
+          <p
+            style={{
+              textAlign: "center",
+              color: "#9ca3c7",
+              marginTop: "25px",
+            }}
+          >
+            Already have an account?{" "}
+            <a
+              href="/login"
+              style={{
+                color: "#a5b4fc",
+                textDecoration: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Login
+            </a>
+          </p>
+        </div>
+
+        <p
+          style={{
+            textAlign: "center",
+            color: "#6f789b",
+            fontSize: "13px",
+            marginTop: "20px",
+          }}
+        >
+          © 2026 SportLens. All rights reserved.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+const inputStyle = {
+  width: "100%",
+  boxSizing: "border-box" as const,
+  padding: "14px",
+  marginTop: "8px",
+  marginBottom: "18px",
+  borderRadius: "10px",
+  border: "1px solid rgba(255,255,255,0.15)",
+  background: "rgba(255,255,255,0.06)",
+  color: "white",
+  fontSize: "14px",
+  outline: "none",
+};
