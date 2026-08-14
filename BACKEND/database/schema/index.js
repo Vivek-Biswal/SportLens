@@ -56,6 +56,15 @@ const schemas = {
     status: "STRING",
     notes: "STRING",
     addedAt: "TIMESTAMP"
+  },
+  User: {
+    id: "STRING (PRIMARY KEY)",
+    name: "STRING",
+    email: "STRING (UNIQUE)",
+    passwordHash: "STRING",
+    role: "STRING (ATHLETE | COACH)",
+    createdAt: "TIMESTAMP",
+    updatedAt: "TIMESTAMP"
   }
 };
 
