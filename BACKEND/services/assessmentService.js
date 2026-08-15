@@ -10,6 +10,12 @@ const {
   findAll,
   findById
 } = require('../models/Assessment');
+const {
+  findByAssessmentId,
+  createAttempt
+} = require('../models/Attempt');
+
+const MAX_ATTEMPTS = 3;
 
 class AssessmentService {
   
@@ -18,8 +24,6 @@ class AssessmentService {
    */
   create({ athleteId, testType }) {
     // 1. Verify Athlete exists
-    // Since athleteId could be a number in JSON but a string in models, loose check or string conversion helps, 
-    // but we will do a strict check by converting input to string to match string IDs.
     const athlete = athletesStore.find(a => String(a.id) === String(athleteId));
     if (!athlete) {
       const error = new Error('Athlete does not exist.');
@@ -35,6 +39,40 @@ class AssessmentService {
     });
 
     return assessment;
+  }
+
+  /**
+   * Creates a new attempt for a given assessment, enforcing the max limit.
+   */
+  createAttempt(assessmentId, user) {
+    // 1. Validate and fetch assessment (throws if unauthorized or not found)
+    const assessment = this.getByIdAuthorized(assessmentId, user, false);
+
+    // 2. Check if assessment is active
+    if (assessment.status !== 'in_progress') {
+      const error = new Error('This assessment is no longer active.');
+      error.code = 'ASSESSMENT_NOT_ACTIVE';
+      error.status = 400; // Bad request
+      throw error;
+    }
+
+    // 3. Fetch existing attempts and check limit
+    const existingAttempts = findByAssessmentId(assessmentId);
+    if (existingAttempts.length >= MAX_ATTEMPTS) {
+      const error = new Error(`Maximum of ${MAX_ATTEMPTS} attempts has been reached for this assessment.`);
+      error.code = 'MAX_ATTEMPTS_REACHED';
+      error.status = 409; // Conflict
+      throw error;
+    }
+
+    // 4. Create new attempt
+    const attemptNumber = existingAttempts.length + 1;
+    const attempt = createAttempt({
+      assessmentId,
+      attemptNumber
+    });
+
+    return attempt;
   }
 
   /**
@@ -56,8 +94,9 @@ class AssessmentService {
 
   /**
    * Retrieve a specific assessment if authorized.
+   * Can optionally attach attempts array to the returned object.
    */
-  getByIdAuthorized(id, user) {
+  getByIdAuthorized(id, user, attachAttempts = true) {
     const assessment = findById(id);
     
     if (!assessment) {
@@ -73,6 +112,12 @@ class AssessmentService {
       error.code = 'FORBIDDEN';
       error.status = 403;
       throw error;
+    }
+
+    // Attach attempts if requested
+    if (attachAttempts) {
+      const attempts = findByAssessmentId(assessment.id);
+      return { assessment, attempts };
     }
 
     return assessment;

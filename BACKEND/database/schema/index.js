@@ -56,6 +56,16 @@ const schemas = {
     notes: "STRING",
     addedAt: "TIMESTAMP"
   },
+  Attempt: {
+    id: "STRING (PRIMARY KEY)",
+    assessmentId: "STRING (FOREIGN KEY -> Assessment.id)",
+    attemptNumber: "INTEGER",
+    result: "NUMBER",
+    unit: "STRING",
+    confidence: "NUMBER",
+    status: "STRING",
+    timestamp: "TIMESTAMP"
+  },
   User: {
     id: "STRING (PRIMARY KEY)",
     name: "STRING",

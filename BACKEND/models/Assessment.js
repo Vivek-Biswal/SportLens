@@ -20,9 +20,10 @@ class Assessment {
 
   /**
    * Serializes the object for API responses, converting to requested snake_case JSON format.
+   * Can optionally include serialized attempts.
    */
-  toJSON() {
-    return {
+  toJSON(attempts = undefined) {
+    const json = {
       id: this.id,
       athlete_id: this.athleteId,
       test_type: this.testType,
@@ -30,6 +31,12 @@ class Assessment {
       created_at: this.createdAt,
       updated_at: this.updatedAt
     };
+
+    if (attempts !== undefined) {
+      json.attempts = attempts.map(a => a.toJSON());
+    }
+
+    return json;
   }
 }
 
