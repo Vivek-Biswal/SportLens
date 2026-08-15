@@ -70,4 +70,36 @@ router.get('/:id/results', authenticateToken, (req, res) => {
   }
 });
 
+/**
+ * GET /athletes/:id/profile
+ * Returns the dynamically calculated performance profile for the athlete.
+ * Module 9 implementation.
+ */
+router.get('/:id/profile', authenticateToken, (req, res) => {
+  try {
+    const profileService = require('../services/profileService');
+    const profile = profileService.generateProfile(req.params.id, req.user);
+    
+    res.status(200).json({
+      success: true,
+      profile: profile.toJSON()
+    });
+  } catch (error) {
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    
+    console.error('[Profile Get Error]', error);
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'An unexpected error occurred.'
+    });
+  }
+});
+
 module.exports = router;

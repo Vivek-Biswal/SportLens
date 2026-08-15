@@ -41,11 +41,13 @@ const schemas = {
   PerformanceProfile: {
     id: "STRING (PRIMARY KEY)",
     athleteId: "STRING (FOREIGN KEY -> Athlete.id)",
-    overallScore: "NUMBER",
-    speedRating: "NUMBER",
-    enduranceRating: "NUMBER",
-    strengthRating: "NUMBER",
-    agilityRating: "NUMBER",
+    speedCategory: "STRING",
+    explosivenessCategory: "STRING",
+    agilityCategory: "STRING",
+    overallCategory: "STRING",
+    overallConfidence: "NUMBER",
+    recommendation: "STRING",
+    createdAt: "TIMESTAMP",
     updatedAt: "TIMESTAMP"
   },
   Shortlist: {

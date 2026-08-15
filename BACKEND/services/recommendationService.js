@@ -7,23 +7,30 @@ const { athletesStore } = require('../models/Athlete');
 const profileService = require('./profileService');
 
 class RecommendationService {
-  getTalentRecommendations(filter = {}) {
-    const { sport, minScore = 0 } = filter;
+  /**
+   * Provides a baseline recommendation string for the performance profile.
+   * To be expanded in Module 10.
+   */
+  getRecommendationForProfile({ overallCategory, validDimensionsCount }) {
+    if (validDimensionsCount < 2) {
+      return 'Complete more assessments to generate a recommendation.';
+    }
 
-    return athletesStore
-      .map(athlete => {
-        const profile = profileService.getProfileByAthleteId(athlete.id);
-        return {
-          athlete,
-          profile,
-          matchScore: Math.min(100, Math.round((profile.overallScore || 70) * 1.1))
-        };
-      })
-      .filter(item => {
-        if (sport && item.athlete.sport !== sport) return false;
-        if (item.profile.overallScore < minScore) return false;
-        return true;
-      });
+    switch (overallCategory) {
+      case 'PROMISING':
+        return 'Recommended for advanced training and competitive shortlisting.';
+      case 'NEEDS_DEVELOPMENT':
+        return 'Focus on foundational strength and conditioning programs.';
+      case 'AVERAGE':
+        return 'Maintain current training with isolated focus on weakest metrics.';
+      default:
+        return 'Assessment complete. Awaiting coach review.';
+    }
+  }
+
+  getTalentRecommendations(filter = {}) {
+    // Legacy mock for compatibility
+    return [];
   }
 }
 
