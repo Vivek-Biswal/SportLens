@@ -2,19 +2,33 @@
  * Validation Middleware
  */
 
+const { VALID_TEST_TYPES } = require('../models/Assessment');
+
 function validateAssessment(req, res, next) {
-  const { athleteId, testType, rawScore } = req.body || {};
+  const { athlete_id, test_type } = req.body || {};
 
-  if (!athleteId || typeof athleteId !== 'string') {
-    return res.status(400).json({ error: 'Validation Error: athleteId is required and must be a string' });
+  if (!athlete_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'INVALID_REQUEST', 
+      message: 'athlete_id is required.' 
+    });
   }
 
-  if (!testType || typeof testType !== 'string') {
-    return res.status(400).json({ error: 'Validation Error: testType is required and must be a string' });
+  if (!test_type || typeof test_type !== 'string') {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'INVALID_REQUEST', 
+      message: 'test_type is required.' 
+    });
   }
 
-  if (rawScore === undefined || typeof rawScore !== 'number') {
-    return res.status(400).json({ error: 'Validation Error: rawScore is required and must be a number' });
+  if (!VALID_TEST_TYPES.includes(test_type)) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'INVALID_TEST', 
+      message: `Invalid test_type. Allowed values are: ${VALID_TEST_TYPES.join(', ')}` 
+    });
   }
 
   next();

@@ -1,7 +1,5 @@
 /**
- * Assessments Routes
- * Target Request Flow:
- * POST /assessments -> routes/assessments -> middleware/authentication -> middleware/validation -> services/assessmentService -> models/Assessment -> database
+ * Assessments Routes (Module 4)
  */
 
 const express = require('express');
@@ -10,25 +8,91 @@ const { authenticateToken } = require('../middleware/authentication');
 const { validateAssessment } = require('../middleware/validation');
 const assessmentService = require('../services/assessmentService');
 
+/**
+ * POST /assessments
+ * Create a new assessment
+ */
 router.post('/', authenticateToken, validateAssessment, (req, res) => {
   try {
-    const assessment = assessmentService.createAssessment(req.body);
+    const { athlete_id, test_type } = req.body;
+    
+    const assessment = assessmentService.create({
+      athleteId: athlete_id,
+      testType: test_type
+    });
+
     res.status(201).json({
-      message: 'Assessment recorded successfully',
-      assessment
+      success: true,
+      assessment: assessment.toJSON()
     });
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Failed to record assessment' });
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    
+    console.error('[Assessment Create Error]', error);
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'An unexpected error occurred.'
+    });
   }
 });
 
-router.get('/', (req, res) => {
-  const { athleteId } = req.query;
-  if (athleteId) {
-    const records = assessmentService.getAssessmentsByAthlete(athleteId);
-    return res.json({ assessments: records });
+/**
+ * GET /assessments
+ * List authorized assessments
+ */
+router.get('/', authenticateToken, (req, res) => {
+  try {
+    const assessments = assessmentService.getAllAuthorized(req.user);
+    
+    res.status(200).json({
+      success: true,
+      assessments: assessments.map(a => a.toJSON())
+    });
+  } catch (error) {
+    console.error('[Assessment List Error]', error);
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'An unexpected error occurred.'
+    });
   }
-  res.json({ assessments: assessmentService.getAllAssessments() });
+});
+
+/**
+ * GET /assessments/:id
+ * Retrieve specific assessment by ID
+ */
+router.get('/:id', authenticateToken, (req, res) => {
+  try {
+    const assessment = assessmentService.getByIdAuthorized(req.params.id, req.user);
+    
+    res.status(200).json({
+      success: true,
+      assessment: assessment.toJSON()
+    });
+  } catch (error) {
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    
+    console.error('[Assessment Get Error]', error);
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'An unexpected error occurred.'
+    });
+  }
 });
 
 module.exports = router;

@@ -26,10 +26,9 @@ const schemas = {
     id: "STRING (PRIMARY KEY)",
     athleteId: "STRING (FOREIGN KEY -> Athlete.id)",
     testType: "STRING",
-    rawScore: "NUMBER",
-    unit: "STRING",
-    assessedAt: "TIMESTAMP",
-    conditionId: "STRING (FOREIGN KEY -> AssessmentCondition.id)"
+    status: "STRING",
+    createdAt: "TIMESTAMP",
+    updatedAt: "TIMESTAMP"
   },
   AssessmentCondition: {
     id: "STRING (PRIMARY KEY)",

@@ -1,48 +1,81 @@
 /**
- * Assessment Service - Handles Business Logic for Physical & Skill Assessments
+ * Assessment Service
+ * Handles Business Logic for Assessments (Module 4)
  */
 
-const { Assessment, assessmentsStore } = require('../models/Assessment');
-const { AssessmentCondition, conditionsStore } = require('../models/AssessmentCondition');
+const { athletesStore } = require('../models/Athlete');
+const {
+  createAssessment,
+  findByAthleteId,
+  findAll,
+  findById
+} = require('../models/Assessment');
 
 class AssessmentService {
-  createAssessment(data) {
-    const { athleteId, testType, rawScore, unit, condition } = data;
-
-    let conditionId = null;
-    if (condition) {
-      const condObj = new AssessmentCondition({
-        id: `cond_${Date.now()}`,
-        temperatureCelsius: condition.temperatureCelsius || 25,
-        altitudeMeters: condition.altitudeMeters || 0,
-        surfaceType: condition.surfaceType || 'standard',
-        equipmentUsed: condition.equipmentUsed || 'standard',
-        notes: condition.notes || ''
-      });
-      conditionsStore.push(condObj);
-      conditionId = condObj.id;
+  
+  /**
+   * Creates a new assessment after validating athlete existence.
+   */
+  create({ athleteId, testType }) {
+    // 1. Verify Athlete exists
+    // Since athleteId could be a number in JSON but a string in models, loose check or string conversion helps, 
+    // but we will do a strict check by converting input to string to match string IDs.
+    const athlete = athletesStore.find(a => String(a.id) === String(athleteId));
+    if (!athlete) {
+      const error = new Error('Athlete does not exist.');
+      error.code = 'ATHLETE_NOT_FOUND';
+      error.status = 404;
+      throw error;
     }
 
-    const assessmentObj = new Assessment({
-      id: `asm_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
-      athleteId,
-      testType,
-      rawScore,
-      unit: unit || 'score',
-      conditionId,
-      assessedAt: new Date()
+    // 2. Create Assessment
+    const assessment = createAssessment({
+      athleteId: String(athleteId),
+      testType
     });
 
-    assessmentsStore.push(assessmentObj);
-    return assessmentObj;
+    return assessment;
   }
 
-  getAssessmentsByAthlete(athleteId) {
-    return assessmentsStore.filter(a => a.athleteId === athleteId);
+  /**
+   * Retrieve all assessments the user is authorized to view.
+   */
+  getAllAuthorized(user) {
+    if (!user) return [];
+
+    if (user.role === 'ATHLETE') {
+      return findByAthleteId(user.id);
+    }
+
+    if (user.role === 'COACH') {
+      return findAll();
+    }
+
+    return [];
   }
 
-  getAllAssessments() {
-    return assessmentsStore;
+  /**
+   * Retrieve a specific assessment if authorized.
+   */
+  getByIdAuthorized(id, user) {
+    const assessment = findById(id);
+    
+    if (!assessment) {
+      const error = new Error('Assessment does not exist.');
+      error.code = 'ASSESSMENT_NOT_FOUND';
+      error.status = 404;
+      throw error;
+    }
+
+    // Authorization check
+    if (user.role === 'ATHLETE' && assessment.athleteId !== user.id) {
+      const error = new Error('You do not have permission to access this resource.');
+      error.code = 'FORBIDDEN';
+      error.status = 403;
+      throw error;
+    }
+
+    return assessment;
   }
 }
 
