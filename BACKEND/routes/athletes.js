@@ -4,9 +4,9 @@
 
 const express = require('express');
 const router = express.Router();
-const { Athlete, athletesStore } = require('../models/Athlete');
 const { authenticateToken } = require('../middleware/authentication');
-const { validateAthlete } = require('../middleware/validation');
+const { validateAthlete, validatePathId } = require('../middleware/validation');
+const { Athlete, athletesStore } = require('../models/Athlete');
 
 router.get('/', (req, res) => {
   res.json({ athletes: athletesStore });
@@ -42,7 +42,7 @@ router.get('/:id', (req, res) => {
  * Returns the final test results history for the athlete.
  * Module 8 implementation.
  */
-router.get('/:id/results', authenticateToken, (req, res) => {
+router.get('/:id/results', authenticateToken, validatePathId, (req, res) => {
   try {
     const assessmentService = require('../services/assessmentService');
     const results = assessmentService.getFinalResultsForAthlete(req.params.id, req.user);
@@ -75,7 +75,7 @@ router.get('/:id/results', authenticateToken, (req, res) => {
  * Returns the dynamically calculated performance profile for the athlete.
  * Module 9 implementation.
  */
-router.get('/:id/profile', authenticateToken, (req, res) => {
+router.get('/:id/profile', authenticateToken, validatePathId, (req, res) => {
   try {
     const profileService = require('../services/profileService');
     const profile = profileService.generateProfile(req.params.id, req.user);

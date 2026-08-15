@@ -5,22 +5,18 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/authentication');
-const { validateAssessment } = require('../middleware/validation');
+const { validatePathId, validateAssessment, validateCVResult } = require('../middleware/validation');
 const assessmentService = require('../services/assessmentService');
 
 /**
- * POST /assessments
+ * POST /api/assessments
  * Create a new assessment
  */
 router.post('/', authenticateToken, validateAssessment, (req, res) => {
   try {
     const { athlete_id, test_type } = req.body;
+    const assessment = assessmentService.createAssessment(athlete_id, test_type, req.user);
     
-    const assessment = assessmentService.create({
-      athleteId: athlete_id,
-      testType: test_type
-    });
-
     res.status(201).json({
       success: true,
       assessment: assessment.toJSON()
@@ -66,10 +62,10 @@ router.get('/', authenticateToken, (req, res) => {
 });
 
 /**
- * GET /assessments/:id
- * Retrieve specific assessment by ID (including its attempts)
+ * GET /api/assessments/:id
+ * Retrieve assessment by ID (including attempts)
  */
-router.get('/:id', authenticateToken, (req, res) => {
+router.get('/:id', authenticateToken, validatePathId, (req, res) => {
   try {
     const { assessment, attempts } = assessmentService.getByIdAuthorized(req.params.id, req.user);
     
@@ -96,13 +92,15 @@ router.get('/:id', authenticateToken, (req, res) => {
 });
 
 /**
- * POST /assessments/:id/attempt
- * Reserve a new attempt for this assessment
+ * POST /api/assessments/:id/attempt
+ * Creates a new attempt for a specific assessment.
+ * Module 6 implementation.
  */
-router.post('/:id/attempt', authenticateToken, (req, res) => {
+router.post('/:id/attempt', authenticateToken, validatePathId, validateCVResult, (req, res) => {
   try {
-    const attempt = assessmentService.createAttempt(req.params.id, req.user);
-
+    const { test_type, result, unit, confidence, status } = req.body;
+    const attempt = assessmentService.createAttempt(req.params.id, { result, unit, confidence, status }, req.user);
+    
     res.status(201).json({
       success: true,
       attempt: attempt.toJSON()
