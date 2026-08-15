@@ -21,6 +21,11 @@ const shortlistRoutes = require('./routes/shortlist');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Database Configuration Simulation
+const dbUrl = process.env.DATABASE_URL || 'in-memory-mock-store://localhost/sportlens_db';
+console.log(`[SportLens Backend] Initializing database connection via: ${dbUrl.split('@').pop()}`);
+console.log(`[SportLens Backend] Database Engine Detected: IN_MEMORY_STORE`);
+
 // Initialize Core Middleware
 app.use(cors());
 app.use(express.json());

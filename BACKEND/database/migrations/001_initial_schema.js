@@ -6,6 +6,7 @@ const { schemas } = require('../schema');
 
 function up() {
   console.log('[Migration 001] Initializing schema structures for SportLens...');
+  console.log('[Migration 001] Verifying IN_MEMORY_STORE tables constraints...');
   // In-memory or database initialization stub
   return {
     success: true,

@@ -5,36 +5,72 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/authentication');
-const { validateAthlete, validatePathId } = require('../middleware/validation');
+const { validateAthlete, validatePathId, validateHistoryQuery } = require('../middleware/validation');
 const { Athlete, athletesStore } = require('../models/Athlete');
 
-router.get('/', (req, res) => {
-  res.json({ athletes: athletesStore });
-});
+const athleteService = require('../services/athleteService');
 
-router.post('/', authenticateToken, validateAthlete, (req, res) => {
-  const { name, email, sport, age, gender, heightCm, weightKg } = req.body;
-  const athlete = new Athlete({
-    id: `ath_${Date.now()}`,
-    name,
-    email,
-    sport,
-    age,
-    gender,
-    heightCm,
-    weightKg
-  });
-
-  athletesStore.push(athlete);
-  res.status(201).json({ message: 'Athlete profile created', athlete });
-});
-
-router.get('/:id', (req, res) => {
-  const athlete = athletesStore.find(a => a.id === req.params.id);
-  if (!athlete) {
-    return res.status(404).json({ error: 'Athlete not found' });
+/**
+ * GET /api/athletes
+ * Retrieve athlete directory
+ */
+router.get('/', authenticateToken, (req, res) => {
+  try {
+    const athletes = athleteService.getAllAthletes(req.user);
+    res.status(200).json({
+      success: true,
+      athletes: athletes.map(a => a.toJSON())
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'SERVER_ERROR', message: 'An unexpected error occurred.' });
   }
-  res.json({ athlete });
+});
+
+/**
+ * POST /api/athletes
+ * Create a new athlete profile (Module 2)
+ */
+router.post('/', authenticateToken, validateAthlete, (req, res) => {
+  try {
+    const athlete = athleteService.createAthlete(req.body, req.user);
+    res.status(201).json({ 
+      success: true, 
+      message: 'Athlete profile created', 
+      athlete: athlete.toJSON() 
+    });
+  } catch (error) {
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    res.status(500).json({ success: false, error: 'SERVER_ERROR', message: 'An unexpected error occurred.' });
+  }
+});
+
+/**
+ * GET /api/athletes/:id
+ * Retrieve specific athlete (Module 2)
+ */
+router.get('/:id', authenticateToken, validatePathId, (req, res) => {
+  try {
+    const athlete = athleteService.getAthleteById(req.params.id, req.user);
+    res.status(200).json({
+      success: true,
+      athlete: athlete.toJSON()
+    });
+  } catch (error) {
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    res.status(500).json({ success: false, error: 'SERVER_ERROR', message: 'An unexpected error occurred.' });
+  }
 });
 
 /**
@@ -94,6 +130,38 @@ router.get('/:id/profile', authenticateToken, validatePathId, (req, res) => {
     }
     
     console.error('[Profile Get Error]', error);
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'An unexpected error occurred.'
+    });
+  }
+});
+
+/**
+ * GET /athletes/:id/history
+ * Returns the chronological assessment history for the athlete.
+ * Module 14 implementation.
+ */
+router.get('/:id/history', authenticateToken, validatePathId, validateHistoryQuery, (req, res) => {
+  try {
+    const historyService = require('../services/athleteHistoryService');
+    const history = historyService.getHistory(req.params.id, req.query, req.user);
+    
+    res.status(200).json({
+      success: true,
+      ...history
+    });
+  } catch (error) {
+    if (error.code) {
+      return res.status(error.status || 400).json({
+        success: false,
+        error: error.code,
+        message: error.message
+      });
+    }
+    
+    console.error('[History Get Error]', error);
     res.status(500).json({
       success: false,
       error: 'SERVER_ERROR',

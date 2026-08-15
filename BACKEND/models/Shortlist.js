@@ -11,11 +11,26 @@ class Shortlist {
     this.notes = notes;
     this.addedAt = addedAt;
   }
+  toJSON() {
+    return {
+      id: this.id,
+      coach_id: this.coachId,
+      athlete_id: this.athleteId,
+      status: this.status,
+      notes: this.notes,
+      created_at: this.addedAt
+    };
+  }
 }
 
 const shortlistsStore = [];
 
+function clearShortlists() {
+  shortlistsStore.length = 0;
+}
+
 module.exports = {
   Shortlist,
-  shortlistsStore
+  shortlistsStore,
+  clearShortlists
 };

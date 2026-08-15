@@ -12,7 +12,8 @@ const schemas = {
     gender: "STRING",
     heightCm: "NUMBER",
     weightKg: "NUMBER",
-    createdAt: "TIMESTAMP"
+    createdAt: "TIMESTAMP",
+    _constraints: "UNIQUE(userId)"
   },
   Coach: {
     id: "STRING (PRIMARY KEY)",
@@ -20,7 +21,8 @@ const schemas = {
     email: "STRING (UNIQUE)",
     organization: "STRING",
     specialization: "STRING",
-    createdAt: "TIMESTAMP"
+    createdAt: "TIMESTAMP",
+    _constraints: "UNIQUE(userId)"
   },
   Assessment: {
     id: "STRING (PRIMARY KEY)",
@@ -32,11 +34,15 @@ const schemas = {
   },
   AssessmentCondition: {
     id: "STRING (PRIMARY KEY)",
-    temperatureCelsius: "NUMBER",
-    altitudeMeters: "NUMBER",
-    surfaceType: "STRING",
-    equipmentUsed: "STRING",
-    notes: "STRING"
+    assessmentId: "STRING (FOREIGN KEY -> Assessment.id, UNIQUE)",
+    device: "STRING",
+    lighting: "STRING",
+    cameraPosition: "STRING",
+    surface: "STRING",
+    footwear: "STRING",
+    createdAt: "TIMESTAMP",
+    updatedAt: "TIMESTAMP",
+    _constraints: "UNIQUE(assessmentId)"
   },
   PerformanceProfile: {
     id: "STRING (PRIMARY KEY)",
@@ -48,7 +54,8 @@ const schemas = {
     overallConfidence: "NUMBER",
     recommendation: "STRING",
     createdAt: "TIMESTAMP",
-    updatedAt: "TIMESTAMP"
+    updatedAt: "TIMESTAMP",
+    _constraints: "UNIQUE(athleteId)"
   },
   Shortlist: {
     id: "STRING (PRIMARY KEY)",
@@ -56,7 +63,8 @@ const schemas = {
     athleteId: "STRING (FOREIGN KEY -> Athlete.id)",
     status: "STRING",
     notes: "STRING",
-    addedAt: "TIMESTAMP"
+    addedAt: "TIMESTAMP",
+    _constraints: "UNIQUE(coachId, athleteId)"
   },
   Attempt: {
     id: "STRING (PRIMARY KEY)",
@@ -66,7 +74,8 @@ const schemas = {
     unit: "STRING",
     confidence: "NUMBER",
     status: "STRING",
-    timestamp: "TIMESTAMP"
+    timestamp: "TIMESTAMP",
+    _constraints: "UNIQUE(assessmentId, attemptNumber)"
   },
   User: {
     id: "STRING (PRIMARY KEY)",

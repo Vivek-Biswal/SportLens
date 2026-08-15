@@ -206,12 +206,158 @@ function validateLogin(req, res, next) {
   next();
 }
 
+// ─── Assessment Conditions Validation (Module 7) ─────────────────────────────
+
+function validateConditions(req, res, next) {
+  const { device, lighting, camera_position, surface, footwear } = req.body || {};
+  const errors = [];
+
+  if (device !== undefined && typeof device !== 'string') {
+    errors.push({ field: 'device', message: 'Device must be a string.' });
+  }
+
+  if (lighting !== undefined && typeof lighting !== 'string') {
+    errors.push({ field: 'lighting', message: 'Lighting must be a string.' });
+  }
+
+  if (camera_position !== undefined && typeof camera_position !== 'string') {
+    errors.push({ field: 'camera_position', message: 'Camera position must be a string.' });
+  }
+
+  if (surface !== undefined && typeof surface !== 'string') {
+    errors.push({ field: 'surface', message: 'Surface must be a string.' });
+  }
+
+  if (footwear !== undefined && typeof footwear !== 'string') {
+    errors.push({ field: 'footwear', message: 'Footwear must be a string.' });
+  }
+
+  if (errors.length > 0) {
+    return sendValidationError(res, errors);
+  }
+  next();
+}
+
+// ─── Athlete Search Validation (Module 13) ─────────────────────────────────
+
+function validateAthleteSearch(req, res, next) {
+  const { page, limit, min_confidence, sort_by, sort_order } = req.query;
+  const errors = [];
+
+  if (page !== undefined) {
+    const p = parseInt(page, 10);
+    if (isNaN(p) || p < 1) errors.push({ field: 'page', message: 'Page must be an integer >= 1' });
+  }
+
+  if (limit !== undefined) {
+    const l = parseInt(limit, 10);
+    if (isNaN(l) || l < 1 || l > 100) errors.push({ field: 'limit', message: 'Limit must be an integer between 1 and 100' });
+  }
+
+  if (min_confidence !== undefined) {
+    const c = parseFloat(min_confidence);
+    if (isNaN(c) || c < 0 || c > 1) errors.push({ field: 'min_confidence', message: 'min_confidence must be between 0 and 1' });
+  }
+
+  const validSortFields = ['name', 'age', 'created_at', 'overall_confidence'];
+  if (sort_by !== undefined && !validSortFields.includes(sort_by)) {
+    errors.push({ field: 'sort_by', message: `sort_by must be one of: ${validSortFields.join(', ')}` });
+  }
+
+  if (sort_order !== undefined && !['asc', 'desc'].includes(sort_order.toLowerCase())) {
+    errors.push({ field: 'sort_order', message: 'sort_order must be asc or desc' });
+  }
+
+  if (errors.length > 0) {
+    return sendValidationError(res, errors);
+  }
+  
+  next();
+}
+
+// ─── Athlete History Validation (Module 14) ────────────────────────────────
+
+function validateHistoryQuery(req, res, next) {
+  const { page, limit, test_type } = req.query;
+  const errors = [];
+
+  if (page !== undefined) {
+    const p = parseInt(page, 10);
+    if (isNaN(p) || p < 1) errors.push({ field: 'page', message: 'Page must be an integer >= 1' });
+  }
+
+  if (limit !== undefined) {
+    const l = parseInt(limit, 10);
+    if (isNaN(l) || l < 1 || l > 100) errors.push({ field: 'limit', message: 'Limit must be an integer between 1 and 100' });
+  }
+
+  if (test_type !== undefined) {
+    const validTypes = ['vertical_jump', 'sprint', 'agility'];
+    if (!validTypes.includes(test_type)) {
+      errors.push({ field: 'test_type', message: `test_type must be one of: ${validTypes.join(', ')}` });
+    }
+  }
+
+  if (errors.length > 0) {
+    return sendValidationError(res, errors);
+  }
+  
+  next();
+}
+
+// ─── Shortlist Validation (Module 15) ──────────────────────────────────────
+
+function validateShortlistQuery(req, res, next) {
+  const { page, limit, sort_by, sort_order } = req.query;
+  const errors = [];
+
+  if (page !== undefined) {
+    const p = parseInt(page, 10);
+    if (isNaN(p) || p < 1) errors.push({ field: 'page', message: 'Page must be an integer >= 1' });
+  }
+
+  if (limit !== undefined) {
+    const l = parseInt(limit, 10);
+    if (isNaN(l) || l < 1 || l > 100) errors.push({ field: 'limit', message: 'Limit must be an integer between 1 and 100' });
+  }
+
+  const validSortFields = ['created_at'];
+  if (sort_by !== undefined && !validSortFields.includes(sort_by)) {
+    errors.push({ field: 'sort_by', message: `sort_by must be one of: ${validSortFields.join(', ')}` });
+  }
+
+  if (sort_order !== undefined && !['asc', 'desc'].includes(sort_order.toLowerCase())) {
+    errors.push({ field: 'sort_order', message: 'sort_order must be asc or desc' });
+  }
+
+  if (errors.length > 0) {
+    return sendValidationError(res, errors);
+  }
+  
+  next();
+}
+
+function validateShortlistPost(req, res, next) {
+  const { athlete_id } = req.body || {};
+  if (!athlete_id) {
+    return sendValidationError(res, [{ field: 'athlete_id', message: 'athlete_id is required' }]);
+  }
+  next();
+}
+
 module.exports = {
   validatePathId,
   validateAssessment,
   validateCVResult,
   validateAthlete,
   validateShortlist,
+  validateConditions,
+  validateAthleteSearch,
+  validateHistoryQuery,
+  validateShortlistQuery,
+  validateShortlistPost,
   validateRegistration,
   validateLogin
 };
+
+

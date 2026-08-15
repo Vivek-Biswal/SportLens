@@ -67,7 +67,12 @@ class PerformanceProfile {
 
 const profilesStore = [];
 
+function clearProfiles() {
+  profilesStore.length = 0;
+}
+
 module.exports = {
   PerformanceProfile,
-  profilesStore
+  profilesStore,
+  clearProfiles
 };

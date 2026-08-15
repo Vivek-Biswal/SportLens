@@ -1,0 +1,376 @@
+openapi: 3.0.0
+info:
+  title: SIH25073 SportLens Backend API
+  description: AI-Powered Mobile Platform for Democratizing Sports Talent Assessment
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      security: []
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, role]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                role:
+                  type: string
+                  enum: [ATHLETE, COACH]
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Validation error or invalid role
+        '409':
+          description: Email already in use
+
+  /auth/login:
+    post:
+      summary: Login
+      security: []
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      summary: Logout (stateless)
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Logout successful
+
+  /auth/me:
+    get:
+      summary: Get current authenticated user
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: User profile retrieved
+
+  /athletes:
+    get:
+      summary: Get athlete directory
+      tags:
+        - Athletes
+      responses:
+        '200':
+          description: List of athletes
+    post:
+      summary: Create a new athlete profile
+      tags:
+        - Athletes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                age: { type: integer }
+                gender: { type: string }
+                location: { type: string }
+                sport: { type: string }
+      responses:
+        '201':
+          description: Athlete created
+        '400':
+          description: Validation error
+
+  /athletes/{id}:
+    get:
+      summary: Get athlete by ID
+      tags:
+        - Athletes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Athlete profile retrieved
+
+  /athletes/{id}/results:
+    get:
+      summary: Get final test results history for athlete
+      tags:
+        - Athletes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Results history retrieved
+
+  /athletes/{id}/profile:
+    get:
+      summary: Get dynamically calculated performance profile
+      tags:
+        - Athletes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance profile retrieved
+
+  /athletes/{id}/history:
+    get:
+      summary: Get chronological assessment history
+      tags:
+        - Athletes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chronological history retrieved
+
+  /assessments:
+    get:
+      summary: List authorized assessments
+      tags:
+        - Assessments
+      responses:
+        '200':
+          description: List of assessments
+    post:
+      summary: Create a new assessment
+      tags:
+        - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [athlete_id, test_type]
+              properties:
+                athlete_id: { type: string }
+                test_type: { type: string, enum: [vertical_jump, sprint, agility] }
+      responses:
+        '201':
+          description: Assessment created
+
+  /assessments/{id}:
+    get:
+      summary: Retrieve assessment by ID (including attempts)
+      tags:
+        - Assessments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assessment retrieved
+
+  /assessments/{id}/attempt:
+    post:
+      summary: Create a new attempt for a specific assessment
+      tags:
+        - Assessments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [result, confidence, status]
+              properties:
+                result: { type: number }
+                unit: { type: string }
+                confidence: { type: number }
+                status: { type: string, enum: [valid, invalid] }
+      responses:
+        '201':
+          description: Attempt created
+        '400':
+          description: Validation error or max attempts reached
+
+  /assessments/{id}/conditions:
+    get:
+      summary: Retrieve assessment conditions
+      tags:
+        - Assessments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conditions retrieved
+    put:
+      summary: Create or update assessment conditions
+      tags:
+        - Assessments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device: { type: string }
+                lighting: { type: string }
+                camera_position: { type: string }
+                surface: { type: string }
+                footwear: { type: string }
+      responses:
+        '200':
+          description: Conditions updated
+
+  /coach/dashboard:
+    get:
+      summary: Returns baseline dashboard data for an authenticated coach
+      tags:
+        - Coach
+      responses:
+        '200':
+          description: Dashboard data retrieved
+        '403':
+          description: Forbidden (Not a coach)
+
+  /coach/athletes:
+    get:
+      summary: Returns the athlete directory for authorized coaches with search/filtering
+      tags:
+        - Coach
+      parameters:
+        - name: sport
+          in: query
+          schema: { type: string }
+        - name: age
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Athlete directory retrieved
+
+  /coach/athletes/{id}:
+    get:
+      summary: Returns a specific athlete profile for an authorized coach
+      tags:
+        - Coach
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Athlete profile retrieved
+
+  /coach/shortlist:
+    get:
+      summary: Retrieves the coach's paginated shortlist
+      tags:
+        - Shortlist
+      responses:
+        '200':
+          description: Shortlist retrieved
+    post:
+      summary: Adds an athlete to the coach's shortlist
+      tags:
+        - Shortlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [athlete_id]
+              properties:
+                athlete_id: { type: string }
+      responses:
+        '201':
+          description: Athlete shortlisted
+        '400':
+          description: Athlete already shortlisted
+
+  /coach/shortlist/{id}:
+    delete:
+      summary: Removes an athlete from the coach's shortlist
+      tags:
+        - Shortlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the athlete to remove
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Athlete removed from shortlist
