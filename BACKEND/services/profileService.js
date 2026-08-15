@@ -111,7 +111,10 @@ class ProfileService {
 
     // 6. Integrate with Recommendation Service (Module 10)
     const recommendationService = require('./recommendationService');
-    const recommendation = recommendationService.getRecommendationForProfile({ overallCategory, validDimensionsCount });
+    const recommendation = recommendationService.generateRecommendation({ 
+      overallCategory, 
+      overallConfidence 
+    });
 
     // 7. Upsert to Data Store
     let profile = profilesStore.find(p => p.athleteId === athleteId);
