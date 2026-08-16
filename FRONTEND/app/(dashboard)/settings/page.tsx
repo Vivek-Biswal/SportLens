@@ -73,7 +73,7 @@ export default function SettingsPage() {
 <div className="pt-4 border-t border-outline-variant">
 <label className="block text-sm font-label-caps text-on-surface-variant mb-1 uppercase tracking-widest">Public Profile URL</label>
 <div className="flex gap-2">
-<input className="input-field bg-surface-container opacity-70 cursor-not-allowed" readonly="" type="text" value="sportlens.com/p/marcus-johnson"/>
+<input className="input-field bg-surface-container opacity-70 cursor-not-allowed" readOnly type="text" value="sportlens.com/p/marcus-johnson"/>
 <button className="btn-secondary whitespace-nowrap"><span className="material-symbols-outlined text-sm align-middle mr-1">content_copy</span>Copy</button>
 </div>
 </div>
