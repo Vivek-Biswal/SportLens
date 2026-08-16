@@ -1,5 +1,5 @@
 'use client';
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 export default function TopNav() {
   const { user } = useAuth();

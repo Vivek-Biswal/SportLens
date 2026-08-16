@@ -1,5 +1,5 @@
 import './globals.css';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/lib/auth/AuthContext';
 
 export const metadata = {
   title: 'SportLens',
