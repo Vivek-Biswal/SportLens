@@ -13,7 +13,11 @@ export function generateToken(user: User): string {
       role: user.role
     },
     JWT_SECRET,
+<<<<<<< Updated upstream
     { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
+=======
+    { expiresIn: JWT_EXPIRES_IN as any }
+>>>>>>> Stashed changes
   );
 }
 

@@ -32,42 +32,7 @@ export default function Sidebar() {
 <span>Performance</span>
 </Link>
 </li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/analytics">
-<span className="material-symbols-outlined">analytics</span>
-<span>Analytics</span>
-</Link>
-</li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/achievements">
-<span className="material-symbols-outlined">emoji_events</span>
-<span>Achievements</span>
-</Link>
-</li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/opportunities">
-<span className="material-symbols-outlined">explore</span>
-<span>Opportunities</span>
-</Link>
-</li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/applications">
-<span className="material-symbols-outlined">description</span>
-<span>Applications</span>
-</Link>
-</li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/messages">
-<span className="material-symbols-outlined">forum</span>
-<span>Messages</span>
-</Link>
-</li>
-<li>
-<Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/notifications">
-<span className="material-symbols-outlined">notifications</span>
-<span>Notifications</span>
-</Link>
-</li>
+
 <li>
 <Link className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-lg transition-colors duration-200 cursor-pointer active:scale-95" href="/settings">
 <span className="material-symbols-outlined">settings</span>

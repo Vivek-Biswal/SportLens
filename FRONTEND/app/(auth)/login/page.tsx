@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { authApi } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,29 +19,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Invalid credentials or server error.");
-      }
-
-      const data = await response.json();
+      const data = await authApi.login({ email, password });
       
-      // Store token (assuming it's returned as token or access_token in JSON)
       const token = data.token || data.access_token;
       if (token) {
-        localStorage.setItem("sportlens_token", token);
+        localStorage.setItem("token", token);
       }
       
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
+      await refreshUser();
+
+      // Based on user role, we could redirect appropriately. For now:
+      if (data.user?.role === 'COACH') {
+        router.push("/coach/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
       
     } catch (err: any) {
       setError(err.message || "An error occurred during login.");

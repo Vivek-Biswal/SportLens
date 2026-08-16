@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { authApi } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [role, setRole] = useState<"student" | "coach">("student");
@@ -10,6 +12,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,23 +27,16 @@ export default function RegisterPage() {
 
     try {
       const backendRole = role === "student" ? "ATHLETE" : "COACH";
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password, role: backendRole }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed. Email might already be in use.");
-      }
-
+      await authApi.register({ name, email, password, role: backendRole });
+      
       // Redirect to login after successful registration
-      window.location.href = "/login";
+      router.push("/login");
     } catch (err: any) {
-      setError(err.message || "An error occurred during registration.");
+      if (err.details && Array.isArray(err.details)) {
+        setError(err.details.map((d: any) => d.message).join(" "));
+      } else {
+        setError(err.message || "An error occurred during registration.");
+      }
     } finally {
       setLoading(false);
     }

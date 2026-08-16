@@ -24,6 +24,8 @@ const AuthContext = createContext<AuthContextType>({
   refreshUser: async () => {},
 });
 
+import { authApi } from '../api/auth';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,15 +34,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
+      if (!localStorage.getItem('token')) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      const data = await authApi.me();
+      if (data && data.user) {
         setUser(data.user);
       } else {
         setUser(null);
       }
     } catch (error) {
+      console.error('Failed to fetch user', error);
       setUser(null);
+      localStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
@@ -51,7 +59,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    try {
+      await authApi.logout();
+    } catch (e) {
+      // ignore logout errors, still clear local session
+    }
+    localStorage.removeItem('token');
     setUser(null);
     router.push('/login');
   };
