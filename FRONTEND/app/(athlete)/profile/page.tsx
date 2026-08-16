@@ -265,7 +265,7 @@ export default function ProfilePage() {
 <span className="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Scouts &amp; Coaches Only</span>
 </label>
 <label className="flex items-center gap-3 cursor-pointer group opacity-50">
-<input className="form-radio text-emerald-green bg-surface border-outline-variant focus:ring-emerald-green focus:ring-offset-surface w-4 h-4" disabled="" name="visibility" type="radio"/>
+<input className="form-radio text-emerald-green bg-surface border-outline-variant focus:ring-emerald-green focus:ring-offset-surface w-4 h-4" disabled name="visibility" type="radio"/>
 <span className="text-sm text-on-surface-variant">Private</span>
 </label>
 </div>

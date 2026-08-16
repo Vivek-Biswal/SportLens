@@ -203,7 +203,7 @@ export default function MessagesPage() {
 <button className="p-2 text-on-surface-variant hover:text-on-surface transition-colors rounded-full shrink-0">
 <span className="material-symbols-outlined">image</span>
 </button>
-<textarea className="w-full bg-transparent border-none text-sm text-on-surface placeholder:text-on-surface-variant focus:ring-0 resize-none py-3 px-2 max-h-32 min-h-[44px]" placeholder="Type a message..." rows="1" style={{ lineHeight: '1.4' }}></textarea>
+<textarea className="w-full bg-transparent border-none text-sm text-on-surface placeholder:text-on-surface-variant focus:ring-0 resize-none py-3 px-2 max-h-32 min-h-[44px]" placeholder="Type a message..." rows={1} style={{ lineHeight: '1.4' }}></textarea>
 <button className="p-2 bg-[#10B981] text-[#0F172A] hover:bg-opacity-90 transition-colors rounded-full shrink-0 flex items-center justify-center">
 <span className="material-symbols-outlined text-sm">send</span>
 </button>

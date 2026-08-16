@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 const JWT_SECRET = process.env.JWT_SECRET || 'sih25073_default_dev_secret';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 
-export function generateToken(user: User) {
+export function generateToken(user: User): string {
   return jwt.sign(
     {
       id: user.id,
@@ -13,7 +13,7 @@ export function generateToken(user: User) {
       role: user.role
     },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions
   );
 }
 
