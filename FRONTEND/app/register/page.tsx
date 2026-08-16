@@ -4,11 +4,46 @@ import { useState } from "react";
 
 export default function RegisterPage() {
   const [role, setRole] = useState<"student" | "coach">("student");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
-    alert(`Registration attempted as ${role}`);
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const backendRole = role === "student" ? "ATHLETE" : "COACH";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password, role: backendRole }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Registration failed. Email might already be in use.");
+      }
+
+      // Redirect to login after successful registration
+      window.location.href = "/login";
+    } catch (err: any) {
+      setError(err.message || "An error occurred during registration.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -170,6 +205,8 @@ export default function RegisterPage() {
             <input
               type="text"
               placeholder="Enter your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
               style={inputStyle}
             />
@@ -180,6 +217,8 @@ export default function RegisterPage() {
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               style={inputStyle}
             />
@@ -190,6 +229,8 @@ export default function RegisterPage() {
             <input
               type="password"
               placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               style={inputStyle}
             />
@@ -200,13 +241,18 @@ export default function RegisterPage() {
             <input
               type="password"
               placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
               style={inputStyle}
             />
 
+            {error && <p style={{ color: "#ffb4ab", fontSize: "14px", marginTop: "10px", textAlign: "center" }}>{error}</p>}
+
             {/* REGISTER */}
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "15px",
@@ -221,7 +267,7 @@ export default function RegisterPage() {
                 cursor: "pointer",
               }}
             >
-              Register as {role === "student" ? "Student" : "Coach"} →
+              {loading ? "Registering..." : `Register as ${role === "student" ? "Student" : "Coach"} →`}
             </button>
           </form>
 

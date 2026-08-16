@@ -5,11 +5,44 @@ import { useState } from "react";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    alert(`Login attempted for ${email}`);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid credentials or server error.");
+      }
+
+      const data = await response.json();
+      
+      // Store token (assuming it's returned as token or access_token in JSON)
+      const token = data.token || data.access_token;
+      if (token) {
+        localStorage.setItem("sportlens_token", token);
+      }
+      
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+      
+    } catch (err: any) {
+      setError(err.message || "An error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,8 +90,10 @@ export default function LoginPage() {
               <a href="#">Forgot password?</a>
             </div>
 
-            <button type="submit" className="login-button">
-              Login
+            {error && <p style={{ color: "#ffb4ab", fontSize: "14px", marginTop: "10px" }}>{error}</p>}
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
