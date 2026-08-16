@@ -1,5 +1,9 @@
+'use client';
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function TopNav() {
+  const { user } = useAuth();
+
   return (
     <header className="flex justify-between items-center h-16 px-gutter sticky top-0 z-30 md:ml-64 bg-surface-container border-b border-outline-variant">
 <div className="flex items-center gap-4">
@@ -26,7 +30,7 @@ export default function TopNav() {
 </button>
 </div>
 <div className="flex items-center gap-3 border-l border-outline-variant pl-6 cursor-pointer hover:opacity-80 transition-opacity">
-<span className="font-body-md text-body-md font-semibold text-primary hidden sm:block">Profile</span>
+<span className="font-body-md text-body-md font-semibold text-primary hidden sm:block">{user?.name || 'Profile'}</span>
 <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-variant border layer-border">
 <img alt="Athlete Avatar" className="w-full h-full object-cover" data-alt="A close up portrait of an elite professional athlete in dramatic, high-contrast studio lighting, capturing intense focus. The background is a deep dark navy #0F172A, maintaining the modern corporate, data-driven aesthetic of a high-end scouting war room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHDRKlPKqDELMIcxjD4Gg_sSerIIvWz_YHFnwEd3VnivGMHkZmjMvngmNrk5s82MguysIsz9xSeP1KKAtjwWsh5W_4f9uSKTLtOwxCg1nPJoWAVr5NYEPfVCziB78SJAfU4o5LxajLmgaa9ykpEbpC_KA2yCndbpT1wG_lzuhStinMpAuqMHMgbyHfZ2d0PIks0wqVf-5wCcN0PmUsOcKk0uNpuWKOEoFQzPReYpaOVN-85ucwkt1ayw"/>
 </div>

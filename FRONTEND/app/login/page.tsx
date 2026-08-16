@@ -14,8 +14,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch('/api/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,21 +22,13 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        throw new Error("Invalid credentials or server error.");
-      }
-
       const data = await response.json();
       
-      // Store token (assuming it's returned as token or access_token in JSON)
-      const token = data.token || data.access_token;
-      if (token) {
-        localStorage.setItem("sportlens_token", token);
+      if (response.ok) {
+        window.location.href = "/dashboard";
+      } else {
+        setError(data.message || "Invalid credentials.");
       }
-      
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
-      
     } catch (err: any) {
       setError(err.message || "An error occurred during login.");
     } finally {

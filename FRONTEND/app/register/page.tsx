@@ -24,21 +24,26 @@ export default function RegisterPage() {
 
     try {
       const backendRole = role === "student" ? "ATHLETE" : "COACH";
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const response = await fetch('/api/auth/register', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, role: backendRole }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          role: backendRole,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Registration failed. Email might already be in use.");
-      }
+      const data = await response.json();
 
-      // Redirect to login after successful registration
-      window.location.href = "/login";
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      } else {
+        setError(data.message || "Registration failed. Email might already be in use.");
+      }
     } catch (err: any) {
       setError(err.message || "An error occurred during registration.");
     } finally {
